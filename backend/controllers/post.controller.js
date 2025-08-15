@@ -1,4 +1,5 @@
 import uploadOnCloudinary from "../config/cloudinary.js";
+import mongoose from "mongoose";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 import path from "path";
@@ -17,13 +18,11 @@ export const uploadPost = async (req, res) => {
 
     const filePath = path.resolve(req.file.path);
 
-  
     if (!fs.existsSync(filePath)) {
       console.error("File not found on disk:", filePath);
       return res.status(500).json({ message: "File not found on disk." });
     }
 
-   
     const cloudinaryRes = await uploadOnCloudinary(filePath);
 
     if (!cloudinaryRes || !cloudinaryRes.secure_url) {
@@ -31,17 +30,18 @@ export const uploadPost = async (req, res) => {
       return res.status(500).json({ message: "Cloudinary upload failed." });
     }
 
-   
+    const taggedValue = tagged || "any";
+    const audienceValue = audience || "any";
+    
     const newPost = await Post.create({
       caption,
-      tagged,
-      audience,
+      tagged: taggedValue,
+      audience: audienceValue,
       mediaType,
-      media: cloudinaryRes.secure_url, 
-      author: req.userId,
+      media: cloudinaryRes.secure_url,
+      author: req.user.id,
     });
-
-    await User.findByIdAndUpdate(req.userId, {
+    await User.findByIdAndUpdate(req.user.id, {
       $push: { posts: newPost._id },
     });
 
@@ -51,6 +51,7 @@ export const uploadPost = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error", error });
   }
 };
+
 export const getAllPost = async (req, res) => {
   try {
     const posts = await Post.find({}).populate(
@@ -65,28 +66,36 @@ export const getAllPost = async (req, res) => {
 
 // likes controller
 
+// likes controller
 export const like = async (req, res) => {
   try {
     const postId = req.params.postId;
-    const post = findById(postId);
+    const userId = req.user?.id || req.userId; // consistent user id
 
+    const post = await Post.findById(postId);
     if (!post) return res.status(400).json({ message: "Post not found" });
 
-    const alreadyLiked = post.like.some(
-      (id) => id.toString() == req.userId.toString()
+    const alreadyLiked = post.likes.some(
+      (id) => id.toString() === userId.toString()
     );
 
     if (alreadyLiked) {
       post.likes = post.likes.filter(
-        (id) => id.toString() != req.userId.toString()
+        (id) => id.toString() !== userId.toString()
       );
     } else {
-      post.likes.push(req.userId);
+      post.likes.push(userId);
     }
 
     await post.save();
-    post.populate("author", "name userName profileImage");
-    return res.status(200).json(post);
+    await post.populate("author", "name username profileImage");
+
+    return res.status(200).json({
+      message: alreadyLiked ? "Post unliked" : "Post liked",
+      likesCount: post.likes.length,
+      liked: !alreadyLiked,
+      postId: post._id,
+    });
   } catch (error) {
     return res.status(500).json({ message: "Error during like post", error });
   }
@@ -95,54 +104,152 @@ export const like = async (req, res) => {
 // comment controller
 export const comment = async (req, res) => {
   try {
-    const { message } = req.body;
-    const postId = req.params.postId;
+    const userId = req.user?.id;                 // from your isAuth
+    const postId = req.params?.postId;
+    const message = (req.body?.message || "").trim();
 
-    const post = await Post.findById(postId);
-    if (!post) {
-      return res.status(400).json({ message: "Post not found" });
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    if (!mongoose.isValidObjectId(postId)) {
+      return res.status(400).json({ message: "Invalid postId" });
     }
-    post.comment.push({
-      author: req.userId,
-      message,
-    });
-    await post.save();
-    post.populate("author", "name userName profileImage");
-    post.populate("comments", "comments.author");
-    return res.status(200).json(post);
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error during comment on post", error });
-  }
-};
+    if (!message) return res.status(400).json({ message: "Message is required" });
 
-
-
-export const savedPost = async (req, res) => {
-  try {
-    const postId = req.params.postId;
-    
-    const user = await findById(req.userId);
-
-    if (!post) return res.status(400).json({ message: "Post not found" });
-
-    const alreadySaved = user.saved.some(
-      (id) => id.toString() == post.toString()
+    const updated = await Post.findByIdAndUpdate(
+      postId,
+      { $push: { comment: { author: userId, message, createdAt: new Date() } } }, // note: comment + author
+      { new: true, select: "_id comment" }
     );
 
-    if (alreadySaved) {
-      user.saved = user.saved.filter(
-        (id) => id.toString() != postId.toString()
-      );
-    } else {
-      user.saved.push(postId);
-    }
+    if (!updated) return res.status(404).json({ message: "Post not found" });
 
-    await user.save();
-    user.populate("saved");
-    return res.status(200).json(user);
-  } catch (error) {
-    return res.status(500).json({ message: "Error during saving post", error });
+    return res.status(201).json({
+      message: "Comment added",
+      commentsCount: updated.comment?.length || 0, // singular 'comment' in schema
+      postId,
+    });
+  } catch (err) {
+    console.error("[COMMENT_ERROR]", err);
+    return res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
+
+export const getComments = async (req, res) => {
+  try {
+    const postId = req.params?.postId;
+    if (!mongoose.isValidObjectId(postId)) {
+      return res.status(400).json({ message: "Invalid postId" });
+    }
+
+    const post = await Post.findById(postId)
+      .select("comment")
+      .populate("comment.author", "username profileImage");
+
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    return res.json({
+      comments: post.comment,               // array of { _id, author, message, createdAt }
+      commentsCount: post.comment.length,
+    });
+  } catch (err) {
+    console.error("[GET_COMMENTS_ERROR]", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+// saved post controller
+export const savedPost = async (req, res) => {
+  try {
+    const userId = req.user?.id;            
+    const postId = req.params.postId;
+
+    // tiny logs
+    console.log("[SAVE_POST] user:", userId, "post:", postId);
+
+    // guards
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ message: "Invalid postId" });
+    }
+
+    // check post exists (cheap exists instead of full find)
+    const postExists = await Post.exists({ _id: postId });
+    if (!postExists) return res.status(404).json({ message: "Post not found" });
+
+    // check if already saved
+    const alreadySaved = await User.exists({ _id: userId, saved: postId });
+
+    // toggle atomically
+    const update = alreadySaved
+      ? { $pull: { saved: postId } }
+      : { $addToSet: { saved: postId } };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      update,
+      { new: true, select: "_id saved" }
+    );
+
+    const savedCount = updatedUser?.saved?.length || 0;
+
+    console.log("[SAVE_POST:OK]", {
+      action: alreadySaved ? "unsave" : "save",
+      savedCount
+    });
+
+    return res.status(200).json({
+      message: alreadySaved ? "Removed from saved" : "Post saved",
+      saved: !alreadySaved,
+      savedCount,
+      postId,
+    });
+  } catch (error) {
+    console.error("[SAVE_POST_ERROR]", error);
+    return res.status(500).json({ message: "Error during saving post", error: error.message });
+  }
+};
+
+
+
+
+export const getFollowingPosts = async (req, res) => {
+  try {
+    const userId = req.user.id; // ✅ fixed
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const posts = await Post.find({
+      author: { $in: user.following }
+    })
+      .populate("author", "name username profileImage")
+      .sort({ createdAt: -1 });
+
+    res.json(posts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch following posts" });
+  }
+};
+
+
+// export const getFollowerPosts = async (req, res) => {
+//   try {
+//     // req.user.id is already coming from isAuth
+//     const user = await User.findById(req.user.id);
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     // Get posts only from people the user follows
+//     const posts = await Post.find({
+//       author: { $in: user.following }
+//     }).sort({ createdAt: -1 });
+
+//     res.json(posts);
+//   } catch (err) {
+//     res.status(500).json({ message: "Server error", error: err.message });
+//   }
+// };

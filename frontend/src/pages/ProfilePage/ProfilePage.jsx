@@ -3,8 +3,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setUserData } from "../../redux/userSlice";
-import { serverURL } from "../../App";
-
+import { serverURL } from "../../config.js";
 import vector02 from "../../../src/assets/vec2.png";
 
 function ProfilePage() {
@@ -23,7 +22,6 @@ function ProfilePage() {
         console.error("Failed to fetch user", error);
       }
     };
-
     fetchUser();
   }, [dispatch]);
 
@@ -73,10 +71,27 @@ function ProfilePage() {
                         {userData?.profession || "no profession"}
                       </div>
 
-                      <div className="inline-flex flex-col items-center">
-                        <p className="text-[#607589] text-base text-center leading-6 whitespace-normal break-words">
-                          {userData?.follower?.length || 0} followers · {userData?.following?.length || 0} following
-                        </p>
+                      {/* Clickable followers/following */}
+                      <div className="text-[#607589] text-base text-center leading-6 whitespace-normal break-words">
+                      <span
+  onClick={() => navigate('/follower')}
+  style={{ cursor: "pointer", marginRight: 8, color: "#2f4eeb", fontWeight: 500 }}
+  tabIndex={0}
+  role="button"
+  onKeyDown={e => { if (e.key === "Enter") navigate('/follower'); }}
+>
+  {userData?.follower?.length || 0} followers
+</span>
+<span style={{ margin: "0 8px" }}>·</span>
+<span
+  onClick={() => navigate('/following')}
+  style={{ cursor: "pointer", color: "#2f4eeb", fontWeight: 500 }}
+  tabIndex={0}
+  role="button"
+  onKeyDown={e => { if (e.key === "Enter") navigate('/following'); }}
+>
+  {userData?.following?.length || 0} following
+</span>
                       </div>
                     </div>
                   </div>

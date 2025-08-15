@@ -11,6 +11,8 @@ import postRouter from './routes/post.routes.js';
 import path from 'path';
 import vibezRouter from './routes/vibez.routes.js';
 import storyRouter from './routes/story.routes.js';
+import messageRouter from './routes/message.routes.js';
+import { app, server } from './socket.js';
 
 
 
@@ -19,7 +21,7 @@ import storyRouter from './routes/story.routes.js';
 
 
 
-const app= express();
+
 const port=process.env.PORT;
 
 
@@ -39,6 +41,7 @@ app.use("/api/user",userRouter);
 app.use("/api/post",postRouter);
 app.use("/api/vibez",vibezRouter);
 app.use("/api/story",storyRouter);
+app.use("/api/message",messageRouter);
 
 
 app.use("/temp", express.static(path.resolve("temp")));
@@ -49,7 +52,7 @@ app.get('/',(req,res)=>{
     res.json({message:"app is working"});
 })
 
-app.listen(port,()=>{
+server.listen(port,()=>{
     connectDB()
     console.log("BAckend is running at:",port);
 })

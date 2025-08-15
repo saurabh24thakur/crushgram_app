@@ -22,7 +22,7 @@ import { app, server } from './socket.js';
 
 
 
-const port=process.env.PORT;
+const port = process.env.PORT || 3002;
 
 
 app.use(express.json());     

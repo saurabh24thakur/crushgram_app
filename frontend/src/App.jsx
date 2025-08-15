@@ -15,7 +15,8 @@ import Followers from "./pages/Followers/Followers";
 import Notification from "./pages/Notifications/Noticfication";
 import Login from "./pages/Login/Login";
 import Signup from "./pages/Signup/Signup";
-import ForgotPassword from "./pages/ForgotPassword/ForgotPAssword";
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword.jsx";
+
 import ProfileEdit from "./pages/profileEdit/profileEdit";
 import UserProfile from "./pages/userProfile/UserProfile";
 import Story from "./pages/Story/Story";

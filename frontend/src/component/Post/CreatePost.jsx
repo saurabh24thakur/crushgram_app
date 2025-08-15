@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { serverURL } from "../../App";
+import { serverURL } from "../../config.js";
 
 const CreatePost = () => {
   const [caption, setCaption] = useState("");

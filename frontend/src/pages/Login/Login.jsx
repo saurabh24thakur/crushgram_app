@@ -5,7 +5,7 @@ import { ClipLoader } from "react-spinners";
 import { useDispatch } from 'react-redux';
 import axios from "axios";
 import { setUserData } from '../../redux/userSlice';
-import { serverURL } from '../../App';
+import { serverURL } from "../../config.js";
 
 function Login() {
   const [username, setUsername] = useState('');

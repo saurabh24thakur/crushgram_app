@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { serverURL } from "../../App";
+import { serverURL } from "../../config.js";
 import vector02 from "../../assets/vec2.png";
 import { setProfileData, setUserData } from "../../redux/userSlice";
 import axios from "axios";

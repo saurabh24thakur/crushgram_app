@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { serverURL } from "../../App";
+import { serverURL } from "../../config.js";
 
 import vector04 from "../../../src/assets/user1.jpg";
 

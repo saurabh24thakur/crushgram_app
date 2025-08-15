@@ -3,7 +3,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { setUserData } from "../redux/userSlice";
-import { serverURL } from "../App";
+import { serverURL } from "../config.js";
 
 function GetCurrentUser() {
   const dispatch = useDispatch();

@@ -20,7 +20,7 @@ function Navbar() {
     <div className="flex justify-between items-center px-4 sm:px-6 md:px-10 py-3 border-b border-[#e5e8ea] w-full bg-white">
       {/* Logo */}
       <div className="flex items-center gap-2 sm:gap-4">
-        <img src={logo} className='w-[100px] h-[60px]' />
+        <img src={logo} className='w-[90px] h-[60px]' />
         <h1 className="text-xl sm:text-2xl font-semibold font-[Edu NSW ACT Cursive]">
           Crushgram
         </h1>

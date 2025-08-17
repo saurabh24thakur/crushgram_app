@@ -71,7 +71,7 @@ const Post = ({ postId, name, username, content, image, likes, comments, shares,
   const focusCommentInput = () => inputRef.current?.focus();
 
   return (
-    <div className="bg-white rounded-lg shadow-sm w-full">
+    <div className="bg-white rounded-lg shadow-sm w-[90%]">
       <div className="flex gap-4 items-center px-4 py-2">
         <div onClick={() => navigate(`profile/${username}`)} className="w-14 h-14 rounded-full bg-cover bg-center cursor-pointer" style={{ backgroundImage: `url(${profileImage})` }} />
         <div><div className="font-medium text-base text-[#111416]">{name}</div></div>

@@ -40,3 +40,35 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Masonry layout for posts */
+.home-container {
+  column-gap: 1rem;
+}
+
+/* Default to 3 columns on larger screens */
+@media (min-width: 1024px) {
+  .home-container {
+    column-count: 3;
+  }
+}
+
+/* 2 columns on medium screens */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .home-container {
+    column-count: 2;
+  }
+}
+
+/* 1 column on small screens */
+@media (max-width: 767px) {
+  .home-container {
+    column-count: 1;
+  }
+}
+
+.home-container > div {
+  break-inside: avoid-column;
+  margin-bottom: 1rem;
+  width: 100%; /* Ensure posts take full width of the column */
+}

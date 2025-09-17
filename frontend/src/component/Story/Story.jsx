@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { serverURL } from "../../config.js";
 
 const Story = () => {
   const [stories, setStories] = useState([]);
@@ -7,7 +8,7 @@ const Story = () => {
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const res = await axios.get("http://localhost:3002/api/story/follower-stories", {
+        const res = await axios.get(`${serverURL}/api/story/follower-stories`, {
           withCredentials: true,
         });
         setStories(res.data);

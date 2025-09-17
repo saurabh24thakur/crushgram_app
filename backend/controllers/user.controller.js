@@ -123,13 +123,13 @@ export const editProfile = async (req, res) => {
   try {
     const { name, username, bio, profession, gender } = req.body;
 
-    const user = await User.findById(req.userId).select("-password");
+    const user = await User.findById(req.user.id).select("-password");
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
     const sameUserWithUsername = await User.findOne({ username }).select("-password");
-    if (sameUserWithUsername && sameUserWithUsername._id.toString() !== req.userId) {
+    if (sameUserWithUsername && sameUserWithUsername._id.toString() !== req.user.id) {
       return res.status(400).json({ message: "Username already exists" });
     }
 

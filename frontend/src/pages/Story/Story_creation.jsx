@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { serverURL } from "../../config.js";
 
 const Story_creation = () => {
   const [caption, setCaption] = useState("");
@@ -31,7 +32,7 @@ const Story_creation = () => {
       formData.append("mediaType", mediaType);
 
       const response = await axios.post(
-        "http://localhost:3002/api/story/upload",
+        `${serverURL}/api/story/upload`,
         formData,
         {
           withCredentials: true,

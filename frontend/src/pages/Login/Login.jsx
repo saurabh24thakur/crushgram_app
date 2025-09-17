@@ -56,7 +56,7 @@ function Login() {
     <div className="min-h-screen flex items-center justify-center bg-white px-4 py-10">
       <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-md">
         <h2 className="text-2xl sm:text-3xl font-bold text-center text-[#111416] mb-6">
-          Log in to ConnectHub
+          Log in to CrushGram
         </h2>
 
         <input
@@ -98,10 +98,10 @@ function Login() {
 
         <div className="flex gap-3">
           <button className="w-1/2 bg-[#EFF2F4] text-sm font-bold text-[#111416] py-2 rounded-xl hover:bg-gray-200 transition">
-            SearchEngineCo
+            Google
           </button>
           <button className="w-1/2 bg-[#EFF2F4] text-sm font-bold text-[#111416] py-2 rounded-xl hover:bg-gray-200 transition">
-            SocialNet
+            GitHub
           </button>
         </div>
 

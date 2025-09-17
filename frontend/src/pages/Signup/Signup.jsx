@@ -108,10 +108,10 @@ function Signup() {
 
         <div className="flex gap-3">
           <button className="w-1/2 bg-[#EFF2F4] text-sm font-bold text-[#111416] py-3 rounded-xl hover:bg-gray-200 transition">
-            SearchEngineCo
+            Google
           </button>
           <button className="w-1/2 bg-[#EFF2F4] text-sm font-bold text-[#111416] py-3 rounded-xl hover:bg-gray-200 transition">
-            SocialNet
+            GitHub
           </button>
         </div>
 

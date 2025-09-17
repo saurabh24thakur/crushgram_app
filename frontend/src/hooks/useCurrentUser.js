@@ -1,7 +1,9 @@
-// src/hooks/useCurrentUser.js (FINAL CORRECTED VERSION)
+// src/hooks/useCurrentUser.js
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserData } from "../redux/userSlice"; // This import is correct
+import { setUserData } from "../redux/userSlice";
+import { serverURL } from "../config.js";
+import axios from "axios";
 
 export default function useCurrentUser() {
   const { userData } = useSelector((state) => state.user);
@@ -9,46 +11,24 @@ export default function useCurrentUser() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (userData) {
-      setLoading(false);
-      return;
-    }
-
-    let isMounted = true;
-
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:3002/api/auth/currentuser", {
-          credentials: "include",
+        const res = await axios.get(`${serverURL}/api/auth/me`, {
+          withCredentials: true,
         });
-
-        if (!isMounted) return;
-
-        if (res.ok) {
-          const data = await res.json();
-          // FIX: Use the imported function name 'setUserData'
-          dispatch(setUserData(data.user || null));
-        } else {
-          // FIX: Use the imported function name 'setUserData'
-          dispatch(setUserData(null));
-        }
+        dispatch(setUserData(res.data));
       } catch (err) {
-        console.error("Error fetching current user:", err);
-        // FIX: On error, dispatch null to clear the user state.
-        // Also use the correct function name 'setUserData'.
         dispatch(setUserData(null));
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     };
 
-    fetchUser();
-
-    return () => {
-      isMounted = false;
-    };
+    if (userData) {
+      setLoading(false);
+    } else {
+      fetchUser();
+    }
   }, [dispatch, userData]);
 
   return { loading };

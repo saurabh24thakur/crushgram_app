@@ -13,6 +13,7 @@ const Post = ({ postId, name, username, content, image, likes, comments, shares,
   const [saved, setSaved] = useState(initialSaved);
   const [commentsList, setCommentsList] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [showCommentBox, setShowCommentBox] = useState(false);
   const inputRef = useRef(null);
 
   // Load comments
@@ -30,7 +31,7 @@ const Post = ({ postId, name, username, content, image, likes, comments, shares,
     }
   };
 
-  useEffect(() => { loadComments(); }, [postId]);
+  useEffect(() => { if(showCommentBox) loadComments(); }, [postId, showCommentBox]);
 
   const handleLike = async () => {
     try {
@@ -56,7 +57,11 @@ const Post = ({ postId, name, username, content, image, likes, comments, shares,
         body: JSON.stringify({ message }),
       });
       const data = await res.json();
-      if (res.ok) { loadComments(); setNewComment(""); }
+      if (res.ok) { 
+        loadComments(); 
+        setNewComment(""); 
+        setShowCommentBox(false); 
+      }
     } catch (err) { console.error(err); }
   };
 
@@ -68,10 +73,8 @@ const Post = ({ postId, name, username, content, image, likes, comments, shares,
     } catch (err) { console.error(err); }
   };
 
-  const focusCommentInput = () => inputRef.current?.focus();
-
   return (
-    <div className="bg-white rounded-lg shadow-sm w-full">
+    <div className="bg-white rounded-lg shadow-sm w-full max-w-2xl mx-auto">
       <div className="flex gap-4 items-center px-4 py-2">
         <div onClick={() => navigate(`profile/${username}`)} className="w-14 h-14 rounded-full bg-cover bg-center cursor-pointer" style={{ backgroundImage: `url(${profileImage})` }} />
         <div><div className="font-medium text-base text-[#111416]">{name}</div></div>
@@ -85,7 +88,7 @@ const Post = ({ postId, name, username, content, image, likes, comments, shares,
         <div onClick={handleLike} className="cursor-pointer">
           <IconWithCount icon={liked ? BiSolidLike : BiLike} count={likeCount} active={liked} />
         </div>
-        <div onClick={focusCommentInput} className="cursor-pointer">
+        <div onClick={() => setShowCommentBox(!showCommentBox)} className="cursor-pointer">
           <IconWithCount icon={BiComment} count={commentCount} />
         </div>
         <div onClick={handleSave} className="cursor-pointer">
@@ -93,25 +96,27 @@ const Post = ({ postId, name, username, content, image, likes, comments, shares,
         </div>
       </div>
 
-      <div className="px-4 pb-4 space-y-3">
-        <h4 className="text-sm font-semibold text-gray-700">Comments ({commentCount})</h4>
-        {commentsList?.length ? commentsList.map((c) => (
-          <div key={c._id ?? `${c.author}-${c.message}`} className="flex items-start gap-3">
-            <img src={c?.author?.profileImage || "https://via.placeholder.com/32"} alt={c?.author?.username || "user"} className="w-8 h-8 rounded-full object-cover" />
-            <div className="bg-gray-100 rounded-lg px-3 py-2 max-w-full">
-              <div className="text-sm">
-                <span className="font-medium mr-2">{c?.author?.username || "User"}</span>{c?.message}
+      {showCommentBox && (
+        <div className="px-4 pb-4 space-y-3">
+          <h4 className="text-sm font-semibold text-gray-700">Comments ({commentCount})</h4>
+          {commentsList?.length ? commentsList.map((c) => (
+            <div key={c._id ?? `${c.author}-${c.message}`} className="flex items-start gap-3">
+              <img src={c?.author?.profileImage || "https://via.placeholder.com/32"} alt={c?.author?.username || "user"} className="w-8 h-8 rounded-full object-cover" />
+              <div className="bg-gray-100 rounded-lg px-3 py-2 max-w-full">
+                <div className="text-sm">
+                  <span className="font-medium mr-2">{c?.author?.username || "User"}</span>{c?.message}
+                </div>
+                {c?.createdAt && <div className="text-[10px] text-gray-500 mt-1">{new Date(c.createdAt).toLocaleString()}</div>}
               </div>
-              {c?.createdAt && <div className="text-[10px] text-gray-500 mt-1">{new Date(c.createdAt).toLocaleString()}</div>}
             </div>
-          </div>
-        )) : <p className="text-sm text-gray-500">Be the first to comment.</p>}
+          )) : <p className="text-sm text-gray-500">Be the first to comment.</p>}
 
-        <form onSubmit={handleAddComment} className="flex items-center gap-2">
-          <input ref={inputRef} type="text" placeholder="Write a comment..." className="flex-1 p-2 border rounded-lg outline-none" value={newComment} onChange={(e) => setNewComment(e.target.value)} />
-          <button type="submit" disabled={!newComment.trim()} className="bg-blue-500 text-white px-3 py-2 rounded-lg disabled:opacity-50">Post</button>
-        </form>
-      </div>
+          <form onSubmit={handleAddComment} className="flex items-center gap-2">
+            <input ref={inputRef} type="text" placeholder="Write a comment..." className="flex-1 p-2 border rounded-lg outline-none" value={newComment} onChange={(e) => setNewComment(e.target.value)} />
+            <button type="submit" disabled={!newComment.trim()} className="bg-blue-500 text-white px-3 py-2 rounded-lg disabled:opacity-50">Post</button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

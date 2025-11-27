@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(cookieParser());     
 
 app.use(cors({
-    origin: "https://crushgram-app-frontend.onrender.com", 
+    origin: "http://localhost:5173", 
     credentials: true 
   }));
   app.use(express.static("public"));

@@ -7,6 +7,8 @@ import { RiUserCommunityLine } from "react-icons/ri";
 import { FaRegPlusSquare } from "react-icons/fa";
 import { MdLiveTv } from "react-icons/md";
 import { IoMdNotificationsOutline } from "react-icons/io";
+import { IoSearch } from "react-icons/io5";
+
 import { BiSearch } from "react-icons/bi";
 import { FiMenu } from 'react-icons/fi'; // Hamburger icon
 import { AiOutlineClose } from 'react-icons/ai'; // Close icon
@@ -27,11 +29,11 @@ function Navbar() {
   ];
 
   return (
-    <div className="flex justify-between items-center px-4 sm:px-6 md:px-10 py-3 border-b border-[#e5e8ea] w-full bg-white relative">
+    <div className="flex justify-between items-center px-4 sm:px-6 md:px-10 py-3 border-b border-[#e5e8ea] w-full bg-black relative">
       {/* Logo */}
       <div className="flex items-center gap-2 sm:gap-4">
         <img src={logo} className='w-[90px] h-[60px]' alt="Crushgram logo" />
-        <h1 className="text-xl sm:text-2xl font-semibold font-[Edu NSW ACT Cursive]">
+        <h1 className="text-xl sm:text-2xl font-semibold font-[Edu NSW ACT Cursive] text-white">
           Crushgram
         </h1>
       </div>
@@ -39,10 +41,12 @@ function Navbar() {
       {/* Search bar for larger screens */}
       <div className="flex-1 mx-4 hidden sm:flex">
         <div
-          className="w-full bg-[#eff2f4] rounded-lg px-4 py-2 flex items-center text-sm sm:text-base text-[#607589] cursor-pointer"
+          className=" bg-[#eff2f4] rounded-lg px-2 py-2 flex items-center text-sm sm:text-base text-[#607589] cursor-pointer"
           onClick={() => navigate('/search')}
         >
-          Search
+          <IoSearch />
+
+         
         </div>
       </div>
 

@@ -21,11 +21,11 @@ function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinks = [
-    { icon: <HiOutlineHome className="text-lg sm:text-xl" />, path: '/' },
-    { icon: <RiUserCommunityLine className="text-lg sm:text-xl" />, path: '/message' },
-    { icon: <MdLiveTv className="text-lg sm:text-xl" />, path: '/follower' },
-    { icon: <FaRegPlusSquare className="text-lg sm:text-xl" />, path: 'post/upload' },
-    { icon: <IoMdNotificationsOutline className="text-lg sm:text-xl" />, path: '/notification' },
+    { icon: <HiOutlineHome className="text-lg sm:text-xl text-white" />, path: '/' },
+    { icon: <RiUserCommunityLine className="text-lg sm:text-xl text-white" />, path: '/message' },
+    { icon: <MdLiveTv className="text-lg sm:text-xl text-white" />, path: '/follower' },
+    { icon: <FaRegPlusSquare className="text-lg sm:text-xl text-white" />, path: 'post/upload' },
+    { icon: <IoMdNotificationsOutline className="text-lg sm:text-xl text-white" />, path: '/notification' },
   ];
 
   return (
@@ -40,24 +40,25 @@ function Navbar() {
 
       {/* Search bar for larger screens */}
       <div className="flex-1 mx-4 hidden sm:flex">
-        <div
-          className=" bg-[#eff2f4] rounded-lg px-2 py-2 flex items-center text-sm sm:text-base text-[#607589] cursor-pointer"
-          onClick={() => navigate('/search')}
-        >
-          <IoSearch />
-
-         
-        </div>
+        
       </div>
 
       {/* Right side icons for larger screens */}
       <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-4">
+      <div
+          className=" bg-gray-700 text-white rounded-lg px-2 py-2 flex items-center text-sm sm:text-base text-[#607589] cursor-pointer"
+          onClick={() => navigate('/search')}
+        >
+          <IoSearch className="text-lg sm:text-xl"/>
+
+         
+        </div>
         {navLinks.map((link, index) => (
-          <div key={index} className="bg-[#eff2f4] p-2 rounded-lg cursor-pointer" onClick={() => navigate(link.path)}>
+          <div key={index} className="bg-gray-700 p-2 rounded-lg cursor-pointer" onClick={() => navigate(link.path)}>
             {link.icon}
           </div>
         ))}
-        <div className="bg-[#eff2f4] p-2 rounded-lg cursor-pointer" onClick={() => navigate('/profile')}>
+        <div className="bg-grey p-2 rounded-lg cursor-pointer" onClick={() => navigate('/profile')}>
           <img
             src={userData?.profileImage || vector013}
             alt="Profile"
@@ -89,11 +90,11 @@ function Navbar() {
                 {link.icon}
               </div>
             ))}
-            <div className="w-full text-center py-2 cursor-pointer hover:bg-gray-100" onClick={() => { navigate('/profile'); setIsMenuOpen(false); }}>
+            <div className="w-full bg-gray-700 text-center py-2 cursor-pointer hover:bg-gray-100" onClick={() => { navigate('/profile'); setIsMenuOpen(false); }}>
               <img
                 src={userData?.profileImage || vector013}
                 alt="Profile"
-                className="w-8 h-8 rounded-full object-cover mx-auto"
+                className="w-16 h-16 rounded-full object-cover mx-auto"
               />
             </div>
           </div>

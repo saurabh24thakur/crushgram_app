@@ -52,8 +52,8 @@ function ChatDraft() {
   }, [selectedUser]);
 
   return (
-    <div className="flex flex-col h-screen bg-white">
-      <div className="flex items-center gap-3 p-4 border-b">
+    <div className="flex flex-col h-screen bg-[#f6e3e3]">
+      <div className="flex bg-white items-center gap-3 p-4 ">
         <img
           src={selectedUser?.profilePic || "https://via.placeholder.com/40"}
           alt={selectedUser?.username || "User"}
@@ -88,7 +88,7 @@ function ChatDraft() {
         })}
       </div>
 
-      <div className="flex items-center gap-2 p-4 border-t">
+      <div className="flex items-center gap-2 p-4  bg-white">
         <input
           type="text"
           placeholder="Write a message..."

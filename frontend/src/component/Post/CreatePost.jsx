@@ -62,13 +62,13 @@ const CreatePost = () => {
   const handleUploadVibez = () => navigate("/vibez/upload");
 
   return (
-    <div className="bg-[#fdfcef] min-h-screen px-4 py-8 flex flex-col items-center">
+    <div className="bg-[#f6e3e3] min-h-screen px-4 py-8 flex flex-col items-center">
       <h1 className="text-2xl font-semibold mb-6 text-gray-900 text-center">
         Create a post
       </h1>
 
       {/* Upload Section */}
-      <div className="border-2 border-dashed border-gray-300 rounded-xl w-full max-w-2xl min-h-64 flex flex-col items-center justify-center text-center px-4 py-6">
+      <div className="border-2 border-dashed border-gray-300 bg-white  rounded-xl w-full max-w-2xl min-h-64 flex flex-col items-center justify-center text-center px-4 py-6">
         {frontendMedia ? (
           mediaType === "image" ? (
             <img

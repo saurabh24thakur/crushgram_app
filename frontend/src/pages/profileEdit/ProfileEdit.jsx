@@ -83,7 +83,7 @@ function ProfileEdit() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white px-4 sm:px-10 md:px-20">
+    <div className="flex items-center justify-center min-h-screen bg-[#f6e3e3] px-4 sm:px-10 md:px-20">
       <div className="w-full max-w-xl">
         <h1 className="text-[#111416] text-[32px] font-bold mb-8 ml-1">
           Edit profile

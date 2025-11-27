@@ -27,7 +27,9 @@ function ProfilePage() {
 
   const handleLogout = async () => {
     try {
-      await axios.get(`${serverURL}/api/auth/logout`, { withCredentials: true });
+      await axios.get(`${serverURL}/api/auth/logout`, {
+        withCredentials: true,
+      });
       dispatch(setUserData(null));
       navigate("/login");
     } catch (err) {
@@ -37,7 +39,7 @@ function ProfilePage() {
 
   return (
     <div>
-      <div className="flex flex-col min-h-[800px] items-start bg-white">
+      <div className="flex flex-col min-h-[800px] items-bg-[#f6e3e3]">
         <div className="flex flex-col items-start w-full">
           <div className="items-center justify-center px-4 sm:px-8 md:px-12 py-4 flex-1 grow flex w-full">
             <div className="flex flex-col w-full max-w-screen-lg items-center mx-auto">
@@ -73,25 +75,38 @@ function ProfilePage() {
 
                       {/* Clickable followers/following */}
                       <div className="text-[#607589] text-base text-center leading-6 whitespace-normal break-words">
-                      <span
-  onClick={() => navigate('/follower')}
-  style={{ cursor: "pointer", marginRight: 8, color: "#2f4eeb", fontWeight: 500 }}
-  tabIndex={0}
-  role="button"
-  onKeyDown={e => { if (e.key === "Enter") navigate('/follower'); }}
->
-  {userData?.follower?.length || 0} followers
-</span>
-<span style={{ margin: "0 8px" }}>·</span>
-<span
-  onClick={() => navigate('/following')}
-  style={{ cursor: "pointer", color: "#2f4eeb", fontWeight: 500 }}
-  tabIndex={0}
-  role="button"
-  onKeyDown={e => { if (e.key === "Enter") navigate('/following'); }}
->
-  {userData?.following?.length || 0} following
-</span>
+                        <span
+                          onClick={() => navigate("/follower")}
+                          style={{
+                            cursor: "pointer",
+                            marginRight: 8,
+                            color: "#2f4eeb",
+                            fontWeight: 500,
+                          }}
+                          tabIndex={0}
+                          role="button"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") navigate("/follower");
+                          }}
+                        >
+                          {userData?.follower?.length || 0} followers
+                        </span>
+                        <span style={{ margin: "0 8px" }}>·</span>
+                        <span
+                          onClick={() => navigate("/following")}
+                          style={{
+                            cursor: "pointer",
+                            color: "#2f4eeb",
+                            fontWeight: 500,
+                          }}
+                          tabIndex={0}
+                          role="button"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") navigate("/following");
+                          }}
+                        >
+                          {userData?.following?.length || 0} following
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -144,7 +159,10 @@ function ProfilePage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 w-full">
                 {userData?.posts?.length > 0 ? (
                   userData.posts.map((post, i) => (
-                    <div key={i} className="mb-4 rounded-lg overflow-hidden bg-white shadow-md">
+                    <div
+                      key={i}
+                      className="mb-4 rounded-lg overflow-hidden bg-white shadow-md"
+                    >
                       <img
                         src={post.media}
                         alt={`post-${i}`}
@@ -153,7 +171,9 @@ function ProfilePage() {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center w-full text-gray-500">No posts yet</div>
+                  <div className="text-center w-full text-gray-500">
+                    No posts yet
+                  </div>
                 )}
               </div>
             </div>

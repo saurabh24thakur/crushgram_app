@@ -59,7 +59,7 @@ function Followers({ type = "follower", title, isCurrentUser = false, data }) {
   }, [handle, segment, data?.list]);
 
   return (
-    <div className="flex flex-col min-h-[800px] items-start relative bg-white">
+    <div className="flex flex-col min-h-[800px] items-start relative bg-[#f6e3e3]">
       <div className="flex flex-col items-start relative self-stretch w-full flex-[0_0_auto]">
         <div className="items-start justify-center px-40 py-5 flex-1 grow flex relative self-stretch w-full">
           <div className="flex flex-col max-w-[960px] items-start relative flex-1 grow gap-3">

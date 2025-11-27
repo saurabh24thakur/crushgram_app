@@ -15,18 +15,14 @@ const Home = () => {
         });
 
         const data = await res.json();
-        console.log("Feed API response:", data); // Check this log in your browser console
+        console.log("Feed API response:", data); 
 
-        // --- THE FIX IS HERE ---
-        // Your backend sends a plain array `[...]`.
-        // This code now correctly checks if `data` itself is an array.
+
         if (res.ok && Array.isArray(data)) {
-          // We set the state with the `data` array directly.
           setPosts(data);
         } else {
-          // This will run if the API response is not ok, or if the data is not an array.
           console.error("API response was not a successful array:", data);
-          setPosts([]); // Set to empty array on failure
+          setPosts([]); 
         }
       } catch (err) {
         console.error("Failed to fetch posts:", err);
@@ -37,12 +33,12 @@ const Home = () => {
     };
 
     fetchPosts();
-  }, []); // The empty array [] is correct and prevents any reloading loops.
+  }, []); 
 
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="home-container">
+    <div className="home-container flex flex-col gap-2 p-4">
       {posts.length > 0 ? (
         posts.map((post) => (
           <Post

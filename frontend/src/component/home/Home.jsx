@@ -38,7 +38,7 @@ const Home = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="home-container flex flex-col gap-2 p-4">
+    <div className="home-container flex flex-col gap-2 p-4 pt-20">
       {posts.length > 0 ? (
         posts.map((post) => (
           <Post

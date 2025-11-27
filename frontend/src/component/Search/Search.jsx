@@ -55,8 +55,8 @@ function Search() {
   };
 
   return (
-    <div className="flex flex-col items-start relative bg-white">
-      <div className="flex flex-col min-h-[800px] items-start relative self-stretch w-full flex-[0_0_auto] bg-white">
+    <div className="flex flex-col items-start relative bg-[#f6e3e3]">
+      <div className="flex flex-col min-h-[800px] items-start relative self-stretch w-full flex-[0_0_auto] ">
         <div className="flex flex-col items-start relative self-stretch w-full flex-[0_0_auto]">
           <div className="items-start justify-center px-40 py-5 flex-1 grow flex relative self-stretch w-full">
             <div className="flex flex-col max-w-[960px] items-start relative flex-1 grow mb-[-1.00px]">
@@ -70,7 +70,7 @@ function Search() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    className="flex-1 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 border bg-white border-gray-300 rounded-lg p-2 focus:outline-none  "
                   />
                   <button
                     onClick={() => setQuery(query)} // Triggers useEffect via state change
@@ -100,29 +100,9 @@ function Search() {
                 </div>
               </div>
 
-              {/* Suggested Users */}
-              <div className="flex flex-col h-[60px] items-start pt-5 pb-3 px-4 relative self-stretch w-full">
-                <div className="font-bold text-[#111416] text-[22px] leading-7">
-                  Suggested Users
-                </div>
-              </div>
+          
 
-              <div className="flex flex-col items-start gap-3 p-4 relative self-stretch w-full flex-[0_0_auto]">
-                <div className="flex items-start gap-3 relative flex-1 self-stretch w-full grow">
-                  {["Sophia Bennett", "Ethan Carter", "Olivia Davis"].map((name, index) => (
-                    <div key={index} className="flex flex-col w-[301px] items-start gap-3 pt-0 pb-3 px-0">
-                      <div className="px-4 py-0 flex flex-col items-center w-full">
-                        <div className="w-[120px] h-[120px] rounded-full overflow-hidden">
-                          <img src={vector04} alt="Profile" className="w-full h-full object-cover" />
-                        </div>
-                      </div>
-                      <div className="flex flex-col items-center self-stretch w-full">
-                        <div className="font-medium text-[#111416] text-base text-center">{name}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              
 
               {/* Search Results Section */}
               {results.length > 0 && (

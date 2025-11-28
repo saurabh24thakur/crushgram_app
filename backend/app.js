@@ -14,14 +14,6 @@ import storyRouter from './routes/story.routes.js';
 import messageRouter from './routes/message.routes.js';
 import { app, server } from './socket.js';
 
-
-
-
-
-
-
-
-
 const port=process.env.PORT;
 
 
@@ -29,7 +21,11 @@ app.use(express.json());
 app.use(cookieParser());     
 
 app.use(cors({
-    origin: "http://localhost:5173", 
+    origin: [
+      "http://localhost:5173",
+      "https://api.procoder.dpdns.org",
+      // Add your Cloudflare URL here once you have it
+    ],
     credentials: true 
   }));
   app.use(express.static("public"));
@@ -52,7 +48,15 @@ app.get('/',(req,res)=>{
     res.json({message:"app is working"});
 })
 
-server.listen(port,()=>{
-    connectDB()
-    console.log("BAckend is running at:",port);
-})
+// Connect to DB immediately for Vercel
+connectDB();
+
+// Only listen if not running on Vercel (local development)
+if (process.env.NODE_ENV !== 'production') {
+    server.listen(port, () => {
+        console.log("Backend is running at:", port);
+    });
+}
+
+// Export the app for Vercel
+export default app;

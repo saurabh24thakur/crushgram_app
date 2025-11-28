@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
-import uploadOnCloudinary from "../config/cloudinary.js"
+import uploadOnCloudinary from "../config/cloudinary.js";
+import { io, getReceiverSocketId } from "../socket.js";
 
 
 // Example controller
@@ -44,7 +45,6 @@ export const searchUsersByUsername = async (req, res) => {
 
 
 
-
 // Follow a user
 export const followUser = async (req, res) => {
   try {
@@ -74,6 +74,21 @@ export const followUser = async (req, res) => {
 
     await currentUser.save();
     await userToFollow.save();
+
+    // Real-time notification: emit to the followed user
+    const receiverSocketId = getReceiverSocketId(userIdToFollow);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newFollower", {
+        _id: currentUser._id,
+        name: currentUser.name,
+        username: currentUser.username,
+        profileImage: currentUser.profileImage,
+        timestamp: new Date(),
+        type: "follow",
+        read: false,
+      });
+      console.log(`[NOTIFICATION] Follow notification sent to ${userToFollow.username}`);
+    }
 
     res.status(200).json({ message: "Successfully followed the user." });
   } catch (error) {
@@ -176,7 +191,8 @@ export const getProfile = async (req, res) => {
     const user = await User.findOne({ username })
       .select("-password")
       .populate("follower", "name username profileImage")
-      .populate("following", "name username profileImage");
+      .populate("following", "name username profileImage")
+      .populate("posts");
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
@@ -185,6 +201,7 @@ export const getProfile = async (req, res) => {
     return res.status(400).json({ message: "Get Profile error", error });
   }
 };
+
 
 
 

@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useEffect, useCallback } from "react"; // <-- 1. Import useCallback
+import React, { useEffect, useCallback } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -27,6 +27,7 @@ import ChatDraft from "./pages/MessageBox/ChatDraft";
 
 // Redux
 import { setOnlineUsers } from "./redux/socketSlice.js";
+import { addNotification } from "./redux/notificationSlice.js";
 
 // Socket
 import { getSocket, disconnectSocket } from "./client.js";
@@ -36,45 +37,43 @@ function App() {
   const { loading } = useCurrentUser();
   const dispatch = useDispatch();
 
-  // ---------------- Socket Effect (FIXED) ----------------
+  // ---------------- Socket Effect ----------------
 
-  // 2. Wrap the event handler in useCallback. This gives the function a stable
-  // identity across re-renders, preventing the useEffect from re-running unnecessarily.
   const handleOnlineUsers = useCallback((users) => {
     dispatch(setOnlineUsers(users || []));
   }, [dispatch]);
 
+  const handleNewFollower = useCallback((followerData) => {
+    dispatch(addNotification(followerData));
+    console.log("[NOTIFICATION] New follower:", followerData);
+  }, [dispatch]);
+
 
   useEffect(() => {
-    // If there is no user, disconnect any existing socket and clear online users.
     if (!userData?._id) {
       disconnectSocket();
       dispatch(setOnlineUsers([]));
       return;
     }
 
-    // Get the single socket instance from your client.js
     const socket = getSocket();
 
-    // Configure and connect the socket ONLY if it's not already connected.
     if (!socket.connected) {
       socket.auth = { userId: userData._id };
       socket.connect();
     }
 
-    // 3. The CORE FIX: Always remove the listener before adding it.
-    // This is an idempotent pattern, meaning it's safe to run multiple times
-    // and will guarantee that only ONE listener for this event is active.
-    socket.off("getOnlineUsers", handleOnlineUsers); // <-- Remove previous listener
-    socket.on("getOnlineUsers", handleOnlineUsers);  // <-- Add the new one
+    socket.off("getOnlineUsers", handleOnlineUsers);
+    socket.on("getOnlineUsers", handleOnlineUsers);
 
-    // The cleanup function runs when the component unmounts or when a dependency changes.
+    socket.off("newFollower", handleNewFollower);
+    socket.on("newFollower", handleNewFollower);
+
     return () => {
-      // It's still good practice to clean up the listener on unmount/logout.
       socket.off("getOnlineUsers", handleOnlineUsers);
+      socket.off("newFollower", handleNewFollower);
     };
-    // 4. Add `handleOnlineUsers` to the dependency array.
-  }, [userData?._id, dispatch, handleOnlineUsers]);
+  }, [userData?._id, dispatch, handleOnlineUsers, handleNewFollower]);
 
 
   // ---------------- Loading State ----------------

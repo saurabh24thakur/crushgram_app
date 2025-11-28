@@ -28,23 +28,21 @@ function UserProfile() {
       const result = await axios.get(`${serverURL}/api/user/getprofile/${userName}`, { withCredentials: true });
       dispatch(setProfileData(result.data));
     } catch (error) {
-      console.log("Profile fetch error:", error);
+      console.error("Profile fetch error:", error);
     }
     setPageLoading(false);
   };
 
   useEffect(() => {
     handleProfile();
-    // eslint-disable-next-line
-  }, [userName, dispatch]);
+  }, [userName]);
 
   useEffect(() => {
     if (profileData && userData) {
-      if (typeof profileData.isFollowing !== "undefined") {
-        setIsFollowing(profileData.isFollowing);
-      } else {
-        setIsFollowing(profileData.follower?.includes(userData._id));
-      }
+      const isUserFollowing = profileData.follower?.some(
+        follower => (follower._id || follower).toString() === userData._id.toString()
+      );
+      setIsFollowing(isUserFollowing);
     }
   }, [profileData, userData]);
 
@@ -62,7 +60,6 @@ function UserProfile() {
       }
     } catch (error) {
       alert(error.response?.data?.message || "Failed to follow user");
-      console.error(error);
     }
     setLoading(false);
   };
@@ -81,7 +78,6 @@ function UserProfile() {
       }
     } catch (error) {
       alert(error.response?.data?.message || "Failed to unfollow user");
-      console.error(error);
     }
     setLoading(false);
   };
@@ -90,24 +86,29 @@ function UserProfile() {
     if (!profileHandle) return;
     navigate(`/profile/${profileHandle}/followers`);
   };
+
   const goFollowing = () => {
     if (!profileHandle) return;
     navigate(`/profile/${profileHandle}/following`);
   };
 
-const handleMessageClick = () => {
-  if (!profileData || profileData?._id === userData?._id) return; // avoid self-chat
+  const handleMessageClick = () => {
+    if (!profileData || profileData?._id === userData?._id) return;
 
-  // Pass a clean, consistent shape to the chat screen
-  const target = {
-    _id: profileData._id,
-    username: profileData.username || profileData.userName,
-    profilePic: profileData.profileImage || profileData.profilePic || "",
+    const target = {
+      _id: profileData._id,
+      username: profileData.username || profileData.userName,
+      profilePic: profileData.profileImage || profileData.profilePic || "",
+    };
+
+    dispatch(setSelectedUser(target));
+    navigate(`/message/${target.username}`);
   };
 
-  dispatch(setSelectedUser(target));
-  navigate(`/message/${target.username}`);
-};
+  const isVideo = (url) => {
+    if (!url) return false;
+    return url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('video');
+  };
 
   if (pageLoading) {
     return (
@@ -182,7 +183,7 @@ const handleMessageClick = () => {
                             disabled={loading}
                             className="font-bold text-[#111416] text-sm text-center leading-[21px] whitespace-nowrap w-full"
                           >
-                            {loading ? "Unfollowing..." : "Unfollow"}
+                            {loading ? "Unfollowing..." : "Following"}
                           </button>
                         ) : (
                           <button
@@ -215,29 +216,33 @@ const handleMessageClick = () => {
                       Posts
                     </div>
                   </div>
-                  <div className="inline-flex flex-col items-center justify-center pt-4 pb-[13px] border-b-[3px] border-[#e5e8ea]">
-                    <div className="text-[#607589] font-bold text-sm leading-[21px] whitespace-nowrap">
-                      Photos
-                    </div>
-                  </div>
-                  <div className="inline-flex flex-col items-center justify-center pt-4 pb-[13px] border-b-[3px] border-[#e5e8ea]">
-                    <div className="text-[#607589] font-bold text-sm leading-[21px] whitespace-nowrap">
-                      Videos
-                    </div>
-                  </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 w-full">
-                {profileData?.posts?.map((post, i) => (
-                  <div key={i} className="mb-4 rounded-lg overflow-hidden bg-white shadow-md">
-                    <img
-                      src={pic1}
-                      alt={`post-${i}`}
-                      className="block w-full h-64 object-cover"
-                    />
+                {profileData?.posts && profileData.posts.length > 0 ? (
+                  profileData.posts.map((post) => (
+                    <div key={post._id} className="mb-4 rounded-lg overflow-hidden bg-white shadow-md relative">
+                      {isVideo(post.media) ? (
+                        <video
+                          src={post.media}
+                          className="block w-full h-64 object-cover"
+                          
+                        />
+                      ) : (
+                        <img
+                          src={post.media || pic1}
+                          alt="post"
+                          className="block w-full h-64 object-cover"
+                        />
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-8 text-[#607589]">
+                    No posts yet
                   </div>
-                ))}
+                )}
               </div>
 
             </div>

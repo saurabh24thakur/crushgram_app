@@ -142,16 +142,7 @@ function ProfilePage() {
                       Posts
                     </div>
                   </div>
-                  <div className="inline-flex flex-col items-center justify-center pt-4 pb-[13px] border-b-[3px] border-[#e5e8ea]">
-                    <div className="text-[#607589] font-bold text-sm leading-[21px] whitespace-nowrap">
-                      Photos
-                    </div>
-                  </div>
-                  <div className="inline-flex flex-col items-center justify-center pt-4 pb-[13px] border-b-[3px] border-[#e5e8ea]">
-                    <div className="text-[#607589] font-bold text-sm leading-[21px] whitespace-nowrap">
-                      Videos
-                    </div>
-                  </div>
+            
                 </div>
               </div>
 

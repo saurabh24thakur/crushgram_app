@@ -1,6 +1,7 @@
 import uploadOnCloudinary from "../config/cloudinary.js";
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
+import { io, getReceiverSocketId } from "../socket.js";
 
 // Send a message
 
@@ -22,14 +23,37 @@ export const sendMessage = async (req, res) => {
         message: req.body.message || "",
       });
 
-    // Return minimal consistent shape (map 'reciever' -> 'receiver')
-    return res.status(201).json({
+    let conversation = await Conversation.findOne({
+      paticipants: { $all: [me, other] }
+    });
+
+    if (!conversation) {
+      conversation = await Conversation.create({
+        paticipants: [me, other],
+        messages: [doc._id]
+      });
+      console.log("[CONVERSATION] Created new conversation:", conversation._id);
+    } else {
+      conversation.messages.push(doc._id);
+      await conversation.save();
+      console.log("[CONVERSATION] Updated existing conversation:", conversation._id);
+    }
+
+    const messageData = {
       _id: String(doc._id),
       sender: String(doc.sender),
       receiver: String(doc.reciever),
       message: doc.message || "",
       createdAt: doc.createdAt,
-    });
+    };
+
+    const receiverSocketId = getReceiverSocketId(other);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", messageData);
+      console.log(`[SOCKET] Message sent to ${other} via socket ${receiverSocketId}`);
+    }
+
+    return res.status(201).json(messageData);
   } catch (err) {
     console.error("[SEND ERROR]", err);
     return res.status(500).json({ message: "Failed to send message" });
@@ -72,20 +96,25 @@ export const getAllMessages = async (req, res) => {
     return res.status(500).json({ message: "Failed to fetch messages" });
   }
 };
-// Get previous chat users
 export const getPreviousUserChats = async (req, res) => {
     try {
-        const currentUserId = req.userId;
+        const currentUserId = req.user?.id;
+
+        if (!currentUserId) {
+            return res.status(401).json({ message: "Not authenticated" });
+        }
 
         const conversations = await Conversation.find({
-            participants: currentUserId
+            paticipants: currentUserId
         })
-            .populate("participants", "-password")
+            .populate("paticipants", "-password")
             .sort({ updatedAt: -1 });
+
+        console.log("[PREVIOUS CHATS] Found conversations:", conversations.length);
 
         const userMap = {};
         conversations.forEach(conv => {
-            conv.participants.forEach(user => {
+            conv.paticipants.forEach(user => {
                 if (user._id.toString() !== currentUserId.toString()) {
                     userMap[user._id] = user;
                 }
@@ -93,6 +122,7 @@ export const getPreviousUserChats = async (req, res) => {
         });
 
         const previousUsers = Object.values(userMap);
+        console.log("[PREVIOUS CHATS] Returning users:", previousUsers.length, previousUsers.map(u => ({ id: u._id, name: u.name, username: u.username })));
 
         return res.status(200).json(previousUsers);
     } catch (error) {
@@ -100,3 +130,4 @@ export const getPreviousUserChats = async (req, res) => {
         return res.status(400).json({ message: "Previous User fetch error", error });
     }
 };
+

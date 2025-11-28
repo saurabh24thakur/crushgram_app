@@ -1,2 +1,1 @@
-// src/config.js
-export const serverURL =  "http://localhost:3002";
+export const serverURL = "https://api.procoder.dpdns.org";

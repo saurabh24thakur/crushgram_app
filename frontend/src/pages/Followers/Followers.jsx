@@ -81,7 +81,7 @@ function Followers({ type = "follower", title, isCurrentUser = false, data }) {
                 return (
                   <div
                     key={user._id || idx}
-                    className="flex min-h-[72px] items-center gap-4 px-4 py-2 w-full bg-white cursor-pointer hover:bg-gray-100 transition border-b-2"
+                    className="flex min-h-[72px] items-center gap-4 px-4 py-2 w-full bg-white cursor-pointer hover:bg-gray-100 transition rounded-lg"
                     onClick={() => navigate(`/profile/${uname}`)}
                   >
                     <img

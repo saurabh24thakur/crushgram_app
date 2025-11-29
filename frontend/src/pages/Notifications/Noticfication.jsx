@@ -52,7 +52,7 @@ function Notification() {
               notifications.map((notification) => (
                 <div
                   key={notification._id || `${notification.username}-${notification.timestamp}`}
-                  className={`flex min-h-[72px] items-center gap-4 px-4 py-2 w-full rounded-lg cursor-pointer transition border-b-2 ${
+                  className={`flex min-h-[72px] items-center gap-4 px-4 py-2 w-full rounded-lg cursor-pointer transition rounded-lg ${
                     notification.read ? 'bg-white' : 'bg-blue-50'
                   } hover:bg-gray-100`}
                   onClick={() => handleNotificationClick(notification)}

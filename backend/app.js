@@ -27,7 +27,8 @@ app.use(async (req, res, next) => {
 app.use(cors({
     origin: [
       "http://localhost:5173",
-      "https://api.procoder.dpdns.org",
+      
+      "https://www.procoder.dpdns.org",
     ],
     credentials: true 
   }));

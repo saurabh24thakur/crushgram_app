@@ -2,11 +2,10 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// Ensure temp folder exists
-const tempDir = path.resolve("temp");
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir);
-}
+import os from "os";
+
+// Use system temp directory (works on Vercel /tmp and local)
+const tempDir = os.tmpdir();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

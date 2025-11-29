@@ -28,6 +28,12 @@ const port=process.env.PORT;
 app.use(express.json());     
 app.use(cookieParser());     
 
+// Middleware to ensure DB is connected before handling requests
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
 app.use(cors({
     origin: "https://www.procoder.dpdns.org", 
     credentials: true 

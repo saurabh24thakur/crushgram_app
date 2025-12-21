@@ -154,11 +154,21 @@ function ProfilePage() {
                       key={i}
                       className="mb-4 rounded-lg overflow-hidden bg-white shadow-md"
                     >
-                      <img
-                        src={post.media}
-                        alt={`post-${i}`}
-                        className="block w-full h-64 object-cover"
-                      />
+                      {post.mediaType === 'video' ? (
+                        <video
+                          src={post.media}
+                          autoPlay
+                          loop
+                          muted
+                          className="block w-full h-64 object-cover"
+                        />
+                      ) : (
+                        <img
+                          src={post.media}
+                          alt={`post-${i}`}
+                          className="block w-full h-64 object-cover"
+                        />
+                      )}
                     </div>
                   ))
                 ) : (

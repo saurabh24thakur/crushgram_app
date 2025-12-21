@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import IconWithCount from "./IconWithCount";
-import { BiLike, BiSolidLike, BiComment, BiBookmark, BiSolidBookmark } from "react-icons/bi";
+import { BiLike, BiSolidLike, BiComment, BiBookmark, BiSolidBookmark, BiVolumeMute, BiVolumeFull } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { serverURL } from "../../config.js";
 
-const Post = ({ postId, name, username, content, image, likes, comments, shares, profileImage, initialLiked = false, initialSaved = false }) => {
+const Post = ({ postId, name, username, content, image, mediaType, likes, comments, shares, profileImage, initialLiked = false, initialSaved = false }) => {
   const navigate = useNavigate();
   const [likeCount, setLikeCount] = useState(likes || 0);
   const [commentCount, setCommentCount] = useState(comments || 0);
   const [shareCount, setShareCount] = useState(shares || 0);
   const [liked, setLiked] = useState(initialLiked);
   const [saved, setSaved] = useState(initialSaved);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef(null);
   const [commentsList, setCommentsList] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [showCommentBox, setShowCommentBox] = useState(false);
@@ -82,7 +84,32 @@ const Post = ({ postId, name, username, content, image, likes, comments, shares,
 
       <div className="px-4 pb-3"><p className="text-base text-[#111416] leading-6">{content}</p></div>
 
-      {image && <div className="w-full h-auto aspect-video bg-cover bg-center" style={{ backgroundImage: `url(${image})` }} />}
+      {image && (
+        mediaType === "video" ? (
+          <div className="relative w-full h-auto aspect-video bg-black">
+            <video
+              ref={videoRef}
+              src={image}
+              autoPlay
+              loop
+              muted={isMuted}
+              className="w-full h-full object-contain"
+              onClick={() => setIsMuted(!isMuted)}
+            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMuted(!isMuted);
+              }}
+              className="absolute bottom-3 right-3 bg-black/60 p-2 rounded-full text-white hover:bg-black/80 transition-all"
+            >
+              {isMuted ? <BiVolumeMute size={20} /> : <BiVolumeFull size={20} />}
+            </button>
+          </div>
+        ) : (
+          <div className="w-full h-auto aspect-video bg-cover bg-center" style={{ backgroundImage: `url(${image})` }} />
+        )
+      )}
 
       <div className="flex flex-wrap justify-between px-4 py-2 gap-3 sm:gap-6">
         <div onClick={handleLike} className="cursor-pointer">

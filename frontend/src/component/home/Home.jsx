@@ -55,6 +55,7 @@ const Home = () => {
             profileImage={post.author?.profileImage}
             initialLiked={post.likedByCurrentUser}
             initialSaved={post.savedByCurrentUser}
+            mediaType={post.mediaType}
           />
         ))
       ) : (

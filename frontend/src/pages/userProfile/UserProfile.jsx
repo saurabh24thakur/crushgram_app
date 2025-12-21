@@ -223,11 +223,13 @@ function UserProfile() {
                 {profileData?.posts && profileData.posts.length > 0 ? (
                   profileData.posts.map((post) => (
                     <div key={post._id} className="mb-4 rounded-lg overflow-hidden bg-white shadow-md relative">
-                      {isVideo(post.media) ? (
+                      {post.mediaType === 'video' || isVideo(post.media) ? (
                         <video
                           src={post.media}
+                          autoPlay
+                          loop
+                          muted
                           className="block w-full h-64 object-cover"
-                          
                         />
                       ) : (
                         <img

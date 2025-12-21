@@ -47,7 +47,7 @@ export const sendMessage = async (req, res) => {
       createdAt: doc.createdAt,
     };
 
-    const receiverSocketId = getReceiverSocketId(other);
+    const receiverSocketId = await getReceiverSocketId(other);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", messageData);
       console.log(`[SOCKET] Message sent to ${other} via socket ${receiverSocketId}`);

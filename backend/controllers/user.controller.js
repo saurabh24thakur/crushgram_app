@@ -11,7 +11,8 @@ export const getCurrentUser = async (req, res) => {
     const user = await User.findById(userId)
       .select("-password")
       .populate("follower", "name username profileImage")
-      .populate("following", "name username profileImage");
+      .populate("following", "name username profileImage")
+      .populate("posts");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

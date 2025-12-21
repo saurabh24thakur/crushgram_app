@@ -2,11 +2,13 @@ import mongoose from "mongoose";
 
 
 const conversationSchema=mongoose.Schema({
-    paticipants:[
-        {type:mongoose.Schema.Types.ObjectId,
-            ref:"User"
-        }
-    ],
+    paticipants:{
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }],
+        index: true
+    },
     messages:[
         {type:mongoose.Schema.Types.ObjectId,
             ref:"Message"
